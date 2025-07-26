@@ -1,10 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { StatsCard } from "@/components/ui/stats-card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { useStore } from "@/store/useStore";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { TrendingUp, Star, Users, ShoppingCart, DollarSign, Package } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from "recharts";
+import { TrendingUp, Star, Users, ShoppingCart, DollarSign, Package, Target, Zap, Activity } from "lucide-react";
 
 const Dashboard = () => {
   const { orders, feedback } = useStore();
@@ -29,6 +30,7 @@ const Dashboard = () => {
   const mostComplainedProduct = Object.entries(mostComplaints).sort(([,a], [,b]) => b - a)[0]?.[0] || "No complaints";
   
   const repeatCustomers = new Set(orders.map(o => o.customer)).size;
+  const conversionRate = ((orders.filter(o => o.status === 'Shipped').length / totalOrders) * 100) || 0;
 
   // Chart data
   const ratingDistribution = [
@@ -40,96 +42,151 @@ const Dashboard = () => {
   ];
 
   const sentimentData = [
-    { name: "Positive", value: feedback.filter(f => f.sentiment === 'Positive').length, color: "#10b981" },
-    { name: "Neutral", value: feedback.filter(f => f.sentiment === 'Neutral').length, color: "#f59e0b" },
-    { name: "Negative", value: feedback.filter(f => f.sentiment === 'Negative').length, color: "#ef4444" },
+    { name: "Positive", value: feedback.filter(f => f.sentiment === 'Positive').length, color: "hsl(var(--success))" },
+    { name: "Neutral", value: feedback.filter(f => f.sentiment === 'Neutral').length, color: "hsl(var(--warning))" },
+    { name: "Negative", value: feedback.filter(f => f.sentiment === 'Negative').length, color: "hsl(var(--destructive))" },
   ];
 
   const revenueData = [
-    { month: "Jan", revenue: 12500 },
-    { month: "Feb", revenue: 15200 },
-    { month: "Mar", revenue: 18900 },
-    { month: "Apr", revenue: 22100 },
-    { month: "May", revenue: 25300 },
-    { month: "Jun", revenue: 28700 },
+    { month: "Jan", revenue: 12500, orders: 45, customers: 38 },
+    { month: "Feb", revenue: 15200, orders: 52, customers: 44 },
+    { month: "Mar", revenue: 18900, orders: 68, customers: 59 },
+    { month: "Apr", revenue: 22100, orders: 75, customers: 67 },
+    { month: "May", revenue: 25300, orders: 89, customers: 78 },
+    { month: "Jun", revenue: 28700, orders: 95, customers: 85 },
   ];
 
+  const performanceData = [
+    { name: "Conversion Rate", value: conversionRate, target: 85 },
+    { name: "Customer Satisfaction", value: 92, target: 90 },
+    { name: "Order Fulfillment", value: 88, target: 95 },
+    { name: "Response Time", value: 96, target: 90 },
+  ];
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Welcome Back, Brand Owner!</h1>
-            <p className="text-muted-foreground">Here's a quick overview of your brand's performance.</p>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              Welcome Back, Brand Owner!
+            </h1>
+            <p className="text-muted-foreground mt-2">Here's your brand's performance overview for today.</p>
+            <div className="flex items-center gap-4 mt-3">
+              <Badge variant="secondary" className="bg-success/10 text-success border-success/20">
+                <Activity className="w-3 h-3 mr-1" />
+                All systems operational
+              </Badge>
+              <Badge variant="outline">
+                Last updated: {new Date().toLocaleTimeString()}
+              </Badge>
+            </div>
           </div>
-          <Badge variant="secondary" className="px-4 py-2">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Growth: +12.5%
-          </Badge>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-success">+12.5%</div>
+            <p className="text-sm text-muted-foreground">Monthly Growth</p>
+            <Badge className="mt-2 bg-gradient-to-r from-primary to-accent">
+              <TrendingUp className="w-3 h-3 mr-1" />
+              Trending Up
+            </Badge>
+          </div>
         </div>
 
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="card-modern">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Top Product</CardTitle>
-              <Star className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{mostOrderedProduct}</div>
-              <p className="text-xs text-muted-foreground">
-                Most ordered this month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="card-modern">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Most Complaints</CardTitle>
-              <Package className="h-4 w-4 text-warning" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{mostComplainedProduct}</div>
-              <p className="text-xs text-muted-foreground">
-                Needs attention
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="card-modern">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Repeat Buyers</CardTitle>
-              <Users className="h-4 w-4 text-success" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{repeatCustomers}</div>
-              <p className="text-xs text-muted-foreground">
-                Loyal customers
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="card-modern">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average Order Value</CardTitle>
-              <DollarSign className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${avgOrderValue.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">
-                +5.2% from last month
-              </p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <StatsCard
+            title="Total Revenue"
+            value={`$${totalRevenue.toLocaleString()}`}
+            description="This month"
+            icon={<DollarSign className="h-4 w-4" />}
+            trend={{ value: 12.5, label: "vs last month" }}
+            variant="success"
+          />
+          
+          <StatsCard
+            title="Top Product"
+            value={mostOrderedProduct}
+            description="Most ordered this month"
+            icon={<Star className="h-4 w-4" />}
+            trend={{ value: 8.2, label: "increase" }}
+          />
+          
+          <StatsCard
+            title="Conversion Rate"
+            value={`${conversionRate.toFixed(1)}%`}
+            description="Orders to visitors"
+            icon={<Target className="h-4 w-4" />}
+            trend={{ value: 3.1, label: "improvement" }}
+            variant="success"
+          />
+          
+          <StatsCard
+            title="Repeat Customers"
+            value={repeatCustomers}
+            description="Loyal customers"
+            icon={<Users className="h-4 w-4" />}
+            trend={{ value: 15.3, label: "growth" }}
+          />
+          
+          <StatsCard
+            title="Avg Order Value"
+            value={`$${avgOrderValue.toFixed(2)}`}
+            description="Per transaction"
+            icon={<ShoppingCart className="h-4 w-4" />}
+            trend={{ value: 5.2, label: "increase" }}
+          />
         </div>
 
+        {/* Performance Metrics */}
+        <Card className="card-modern">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-primary" />
+              Performance Metrics
+            </CardTitle>
+            <CardDescription>
+              Key performance indicators for your business
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {performanceData.map((metric) => (
+                <div key={metric.name} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">{metric.name}</span>
+                    <span className="text-sm text-muted-foreground">{metric.value}%</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className={cn(
+                        "h-2 rounded-full transition-all duration-500",
+                        metric.value >= metric.target 
+                          ? "bg-gradient-to-r from-success to-success/80" 
+                          : "bg-gradient-to-r from-warning to-warning/80"
+                      )}
+                      style={{ width: `${Math.min(metric.value, 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Target: {metric.target}%</span>
+                    <span className={metric.value >= metric.target ? "text-success" : "text-warning"}>
+                      {metric.value >= metric.target ? "✓ Met" : "⚠ Below"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Product Ratings Distribution */}
           <Card className="card-modern">
             <CardHeader>
-              <CardTitle>Product Ratings Distribution</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Product Ratings Distribution
+              </CardTitle>
               <CardDescription>
                 Distribution of feedback ratings across all products
               </CardDescription>
@@ -137,12 +194,23 @@ const Dashboard = () => {
             <CardContent>
               <ChartContainer config={{}}>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={ratingDistribution}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                  <BarChart data={ratingDistribution} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                     <XAxis dataKey="rating" />
                     <YAxis />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                    <Bar 
+                      dataKey="count" 
+                      fill="url(#colorGradient)" 
+                      radius={[4, 4, 0, 0]}
+                      className="hover:opacity-80 transition-opacity"
+                    />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                      </linearGradient>
+                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -152,7 +220,10 @@ const Dashboard = () => {
           {/* Customer Sentiment Analysis */}
           <Card className="card-modern">
             <CardHeader>
-              <CardTitle>Customer Sentiment Analysis</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Customer Sentiment Analysis
+              </CardTitle>
               <CardDescription>
                 Overall sentiment breakdown from customer feedback
               </CardDescription>
@@ -168,6 +239,8 @@ const Dashboard = () => {
                       innerRadius={60}
                       outerRadius={120}
                       dataKey="value"
+                      stroke="hsl(var(--background))"
+                      strokeWidth={2}
                     >
                       {sentimentData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -177,47 +250,57 @@ const Dashboard = () => {
                   </PieChart>
                 </ResponsiveContainer>
               </ChartContainer>
-              <div className="flex justify-center mt-4 space-x-4">
-                {sentimentData.map((item) => (
-                  <div key={item.name} className="flex items-center">
-                    <div 
-                      className="w-3 h-3 rounded-full mr-2" 
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span className="text-sm text-muted-foreground">
-                      {item.name}: {item.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <ChartLegend payload={sentimentData.map(item => ({ value: `${item.name}: ${item.value}`, color: item.color }))} />
             </CardContent>
           </Card>
         </div>
 
-        {/* Recent Activity */}
+        {/* Revenue & Growth Analytics */}
         <Card className="card-modern">
           <CardHeader>
-            <CardTitle>Monthly Revenue Growth</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              Revenue & Growth Analytics
+            </CardTitle>
             <CardDescription>
-              Your revenue trend over the past 6 months
+              Multi-metric analysis of your business performance
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={{}}>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                <AreaChart data={revenueData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis dataKey="month" />
                   <YAxis />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line 
-                    type="monotone" 
+                  <Area
+                    type="monotone"
                     dataKey="revenue" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={3}
-                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                    stackId="1"
+                    stroke="hsl(var(--primary))"
+                    fill="url(#revenueGradient)"
+                    strokeWidth={2}
                   />
-                </LineChart>
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    stackId="2"
+                    stroke="hsl(var(--accent))"
+                    fill="url(#ordersGradient)"
+                    strokeWidth={2}
+                  />
+                  <defs>
+                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05}/>
+                    </linearGradient>
+                    <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0.05}/>
+                    </linearGradient>
+                  </defs>
+                </AreaChart>
               </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
