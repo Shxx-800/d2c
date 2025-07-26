@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* D2C Booster Design System - Modern SaaS 2025 */
+
+@layer base {
+  :root {
+    /* Core colors */
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+
+    /* Card colors */
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    /* Popover colors */
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+
+    /* Primary - Purple/Indigo */
+    --primary: 269 87% 54%;
+    --primary-foreground: 255 255 255;
+    --primary-light: 269 87% 64%;
+    --primary-dark: 269 87% 44%;
+
+    /* Secondary - Slate */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 15 23 42;
+
+    /* Muted colors */
+    --muted: 210 40% 96%;
+    --muted-foreground: 100 116 139;
+
+    /* Accent - Cyan */
+    --accent: 190 95% 65%;
+    --accent-foreground: 255 255 255;
+
+    /* Success */
+    --success: 142 76% 36%;
+    --success-foreground: 255 255 255;
+
+    /* Warning */
+    --warning: 38 92% 50%;
+    --warning-foreground: 255 255 255;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 255 255 255;
+
+    /* Border and input */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 269 87% 54%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(269 87% 54%), hsl(190 95% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(269 87% 64%), hsl(269 87% 44%));
+    --gradient-hero: linear-gradient(135deg, hsl(269 87% 54%) 0%, hsl(245 58% 51%) 50%, hsl(190 95% 65%) 100%);
+    
+    /* Shadows */
+    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-medium: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-large: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 40px hsl(269 87% 54% / 0.3);
+
+    /* Radius */
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary to-accent text-white font-medium py-2.5 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+  
+  .card-modern {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20;
+  }
+}
